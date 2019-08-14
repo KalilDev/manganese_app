@@ -1,10 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:manganese_app/InfoPage.dart';
+import 'package:manganese_app/ui/alloys_info_view.dart';
+import 'package:manganese_app/ui/atom_painter.dart';
 
-import 'single_manganese.dart';
-import 'text.dart';
+import '../text.dart';
 
 class ManganeseSea extends StatefulWidget {
   @override
@@ -136,19 +136,11 @@ class _ManganeseSeaState extends State<ManganeseSea>
     final int rowsPerPart = (_kAtomsPerPart / 4).ceil();
     final double sizeOfPart = (sizeOf4 / 4) * rowsPerPart + 100;
     scrollController.addListener(() {
-      final double alreadyScrolled =
-          scrollController.position.extentBefore - 300;
-      int currentPage;
-      if (alreadyScrolled < sizeOfPart) {
-        currentPage = 0;
-      } else if (alreadyScrolled < 2 * sizeOfPart) {
-        currentPage = 1;
-      } else if (alreadyScrolled < 3 * sizeOfPart) {
-        currentPage = 2;
-      } else {
-        currentPage = 3;
-      }
-      if (currentPage != this.currentPage) {
+      final double current = scrollController.position.extentBefore +
+          (scrollController.position.viewportDimension / 2) -
+          300;
+      int currentPage = (current / sizeOfPart).floor();
+      if (currentPage != this.currentPage && currentPage > -1) {
         setState(() {
           this.currentPage = currentPage;
         });

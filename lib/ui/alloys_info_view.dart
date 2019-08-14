@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:manganese_app/ui/atom_painter.dart';
 
-import 'single_manganese.dart';
-import 'text.dart';
+import '../text.dart';
 
 class InfoPages extends StatefulWidget {
   InfoPages(this.initialPage);
@@ -101,6 +101,9 @@ class _InfoPagesState extends State<InfoPages> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: PageView.builder(
-            itemCount: titles.length, itemBuilder: itemBuilder));
+      itemCount: titles.length,
+      itemBuilder: itemBuilder,
+      controller: _pageController,
+    ));
   }
 }
