@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:manganese_app/ui/manganese_alloys_view.dart';
 import 'package:manganese_app/ui/map_view.dart';
+import 'package:manganese_app/ui/molecules_view.dart';
 import 'package:manganese_app/ui/periodic_table_view.dart';
 
 void main() => runApp(MyApp());
@@ -32,7 +33,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    children = [PeriodicTableView(), MapView(), ManganeseSea()];
+    children = [
+      PeriodicTableView(),
+      MapView(),
+      ManganeseSea(),
+      MoleculesView()
+    ];
     super.initState();
   }
 
@@ -57,7 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.pin_drop), title: Text('Mapa')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard), title: Text('Ligas'))
+                icon: Icon(Icons.dashboard), title: Text('Ligas')),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.share), title: Text('Compostos'))
           ]),
     );
   }
