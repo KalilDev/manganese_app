@@ -36,6 +36,12 @@ class _ManganeseSeaState extends State<ManganeseSea>
     super.dispose();
   }
 
+  AtomTheme _getTheme(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.light
+        ? AtomTheme.light().copyWith(electronSize: 4.0, particleShake: 0.5)
+        : AtomTheme.dark().copyWith(electronSize: 4.0, particleShake: 0.5);
+  }
+
   Widget buildElementalManganese() {
     return SliverGrid(
         gridDelegate:
@@ -50,7 +56,8 @@ class _ManganeseSeaState extends State<ManganeseSea>
                         child: CustomPaint(
                             painter: AtomPainter.manganese(
                                 _manganeseAnimation.value,
-                                style: Theme.of(context).textTheme.body1)),
+                                style: Theme.of(context).textTheme.body1,
+                                theme: _getTheme(context))),
                       ));
                 }),
             childCount: _kAtomsPerPart));
@@ -68,9 +75,11 @@ class _ManganeseSeaState extends State<ManganeseSea>
                 return CustomPaint(
                     painter: isManganese
                         ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1)
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context))
                         : AtomPainter.silicon(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1));
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context)));
               });
         }, childCount: _kAtomsPerPart));
   }
@@ -87,9 +96,11 @@ class _ManganeseSeaState extends State<ManganeseSea>
                 return CustomPaint(
                     painter: isManganese
                         ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1)
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context))
                         : AtomPainter.iron(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1));
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context)));
               });
         }, childCount: _kAtomsPerPart));
   }
@@ -106,20 +117,22 @@ class _ManganeseSeaState extends State<ManganeseSea>
                 return CustomPaint(
                     painter: isManganese
                         ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1)
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context))
                         : AtomPainter.aluminum(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1));
+                            style: Theme.of(context).textTheme.body1,
+                            theme: _getTheme(context)));
               });
         }, childCount: _kAtomsPerPart));
   }
 
   Widget buildAppBar() {
     return SliverAppBar(
-      centerTitle: true,
       title: Container(
           padding: EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-              color: Colors.indigo, borderRadius: BorderRadius.circular(20.0)),
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.circular(20.0)),
           child: const Text(manganese)),
       flexibleSpace: FlexibleSpaceBar(
           background: Image.asset(
@@ -127,7 +140,7 @@ class _ManganeseSeaState extends State<ManganeseSea>
         fit: BoxFit.cover,
       )),
       expandedHeight: 300,
-      pinned: false,
+      pinned: true,
     );
   }
 

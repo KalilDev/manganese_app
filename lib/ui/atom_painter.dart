@@ -5,21 +5,102 @@ import 'package:flutter/material.dart';
 const double phi = 1.6180339887498948482045868343656;
 const double goldenAngle = 2.3999632297286533222315555066336;
 
+class AtomTheme {
+  AtomTheme(
+      {this.protonColor,
+      this.electronColor,
+      this.neutronColor,
+      this.electronSize = 4.0,
+      this.levelSize = 4.0,
+      this.particleSize = 10.0,
+      this.particleShake = 2.0,
+      this.textColor,
+      this.levelColor});
+  factory AtomTheme.dark(
+      {double electronSize,
+      double levelSize,
+      double particleSize,
+      double particleShake}) {
+    return AtomTheme(
+        protonColor: Colors.red[200],
+        neutronColor: Colors.green[200],
+        levelColor: Colors.yellow[100],
+        electronColor: Colors.yellow[400],
+        textColor: Colors.black,
+        electronSize: electronSize,
+        particleSize: particleSize,
+        levelSize: levelSize,
+        particleShake: particleShake);
+  }
+  factory AtomTheme.light(
+      {double electronSize,
+      double levelSize,
+      double particleSize,
+      double particleShake}) {
+    return AtomTheme(
+        protonColor: Colors.red,
+        neutronColor: Colors.green,
+        levelColor: Colors.amber[200],
+        electronColor: Colors.amber,
+        textColor: Colors.black,
+        electronSize: electronSize,
+        particleSize: particleSize,
+        levelSize: levelSize,
+        particleShake: particleShake);
+  }
+  final Color protonColor;
+  final Color neutronColor;
+  final Color electronColor;
+  final Color levelColor;
+  final Color textColor;
+  final double electronSize;
+  final double levelSize;
+  final double particleSize;
+  final double particleShake;
+  AtomTheme copyWith(
+      {Color protonColor,
+      Color neutronColor,
+      Color electronColor,
+      Color levelColor,
+      Color textColor,
+      double electronSize,
+      double levelSize,
+      double particleSize,
+      double particleShake}) {
+    return AtomTheme(
+        protonColor: protonColor ?? this.protonColor,
+        neutronColor: neutronColor ?? this.neutronColor,
+        electronColor: electronColor ?? this.electronColor,
+        levelColor: levelColor ?? this.levelColor,
+        textColor: textColor ?? this.textColor,
+        electronSize: electronSize ?? this.electronSize,
+        levelSize: levelSize ?? this.levelSize,
+        particleSize: particleSize ?? this.particleSize,
+        particleShake: particleShake ?? this.particleShake);
+  }
+}
+
 class AtomPainter extends CustomPainter {
   AtomPainter(this.movement,
       {this.protons,
       this.neutrons,
       this.electronsPerLevel,
       this.symbol,
-      this.style});
+      this.style,
+      this.theme});
   final double movement;
   final int protons;
   final int neutrons;
   final Map<int, int> electronsPerLevel;
   final String symbol;
   final TextStyle style;
+  final AtomTheme theme;
 
-  factory AtomPainter.manganese(double movement, {TextStyle style}) {
+  factory AtomPainter.manganese(double movement,
+      {TextStyle style, Brightness brightness, AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    final AtomTheme t = theme ??
+        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
     const int kProtons = 25;
     const int kNeutrons = 30;
     const Map<int, int> kElectronsPerLevel = <int, int>{
@@ -34,10 +115,15 @@ class AtomPainter extends CustomPainter {
         neutrons: kNeutrons,
         electronsPerLevel: kElectronsPerLevel,
         symbol: kSymbol,
-        style: style);
+        style: style,
+        theme: t);
   }
 
-  factory AtomPainter.silicon(double movement, {TextStyle style}) {
+  factory AtomPainter.silicon(double movement,
+      {TextStyle style, Brightness brightness, AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    final AtomTheme t = theme ??
+        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
     const int kProtons = 14;
     const int kNeutrons = 14;
     const Map<int, int> kElectronsPerLevel = <int, int>{3: 4, 2: 8, 1: 2};
@@ -47,10 +133,15 @@ class AtomPainter extends CustomPainter {
         neutrons: kNeutrons,
         electronsPerLevel: kElectronsPerLevel,
         symbol: kSymbol,
-        style: style);
+        style: style,
+        theme: t);
   }
 
-  factory AtomPainter.iron(double movement, {TextStyle style}) {
+  factory AtomPainter.iron(double movement,
+      {TextStyle style, Brightness brightness, AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    final AtomTheme t = theme ??
+        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
     const int kProtons = 26;
     const int kNeutrons = 29;
     const Map<int, int> kElectronsPerLevel = <int, int>{
@@ -65,10 +156,15 @@ class AtomPainter extends CustomPainter {
         neutrons: kNeutrons,
         electronsPerLevel: kElectronsPerLevel,
         symbol: kSymbol,
-        style: style);
+        style: style,
+        theme: t);
   }
 
-  factory AtomPainter.carbon(double movement, {TextStyle style}) {
+  factory AtomPainter.carbon(double movement,
+      {TextStyle style, Brightness brightness, AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    final AtomTheme t = theme ??
+        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
     const int kProtons = 6;
     const int kNeutrons = 6;
     const Map<int, int> kElectronsPerLevel = <int, int>{2: 4, 1: 2};
@@ -78,10 +174,15 @@ class AtomPainter extends CustomPainter {
         neutrons: kNeutrons,
         electronsPerLevel: kElectronsPerLevel,
         symbol: kSymbol,
-        style: style);
+        style: style,
+        theme: t);
   }
 
-  factory AtomPainter.aluminum(double movement, {TextStyle style}) {
+  factory AtomPainter.aluminum(double movement,
+      {TextStyle style, Brightness brightness, AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    final AtomTheme t = theme ??
+        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
     const int kProtons = 13;
     const int kNeutrons = 13;
     const Map<int, int> kElectronsPerLevel = <int, int>{3: 3, 2: 8, 1: 2};
@@ -91,7 +192,8 @@ class AtomPainter extends CustomPainter {
         neutrons: kNeutrons,
         electronsPerLevel: kElectronsPerLevel,
         symbol: kSymbol,
-        style: style);
+        style: style,
+        theme: t);
   }
 
   @override
@@ -103,7 +205,7 @@ class AtomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Constants
-    final double _kSizeOfElectron = size.width / 60;
+    final double _kSizeOfElectron = theme.electronSize ?? size.width / 60;
     final double _kOnePart = size.width /
         (2 + electronsPerLevel.keys.reduce((int i, int i2) => i + i2)) /
         2;
@@ -112,11 +214,11 @@ class AtomPainter extends CustomPainter {
     // Energy level painter
     final Paint _kEnergyLevelPainter = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = _kSizeOfElectron / 4
-      ..color = Colors.indigo;
+      ..strokeWidth = theme.levelSize ?? _kSizeOfElectron / 4
+      ..color = theme.levelColor;
     final Paint _kEletronPainter = Paint()
       ..style = PaintingStyle.fill
-      ..color = Colors.orange;
+      ..color = theme.electronColor;
 
     void drawElectrons(int electrons, {double radius, num frequency}) {
       final double angleElectron = 2 * pi / electrons;
@@ -143,11 +245,12 @@ class AtomPainter extends CustomPainter {
     }
 
     // Nucleus
-    final double _kParticleSize = size.width / 100;
-    final double _kParticleMovement = _kParticleSize / 16;
+    final double _kParticleSize = theme.particleSize ?? size.width / 100;
+    final double _kParticleMovement =
+        theme.particleShake ?? _kParticleSize / 16;
     const int _kParticleMovementFrequency = 40;
-    final Paint _kProtonPaint = Paint()..color = Colors.lime;
-    final Paint _kNeutronPaint = Paint()..color = Colors.blue;
+    final Paint _kProtonPaint = Paint()..color = theme.protonColor;
+    final Paint _kNeutronPaint = Paint()..color = theme.neutronColor;
     final double nucleusSize = (protons / 10) * _kParticleSize * 7;
     void drawParticle(Offset position, bool isProton) {
       double angle = 2 * pi * _kParticleMovementFrequency * movement;
@@ -177,7 +280,8 @@ class AtomPainter extends CustomPainter {
     drawParticles(protons, true);
     if (style != null)
       TextPainter(
-          text: TextSpan(text: symbol, style: style),
+          text: TextSpan(
+              text: symbol, style: style.copyWith(color: theme.textColor)),
           textDirection: TextDirection.ltr,
           textAlign: TextAlign.center)
         ..layout(maxWidth: size.width, minWidth: size.width)

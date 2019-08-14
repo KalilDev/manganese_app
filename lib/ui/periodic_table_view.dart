@@ -50,6 +50,7 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Material(
+              type: MaterialType.card,
               child: SizedBox(
                   height: size.width / 4 + 40.0,
                   width: size.width / 4,
@@ -62,7 +63,17 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
                           child: AnimatedBuilder(
                             animation: _animation,
                             builder: (_, __) => CustomPaint(
-                              painter: AtomPainter.manganese(_animation.value),
+                              painter: AtomPainter.manganese(_animation.value,
+                                  theme: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? AtomTheme.light().copyWith(
+                                          electronSize: 5,
+                                          particleShake: 0.4,
+                                          levelSize: 1)
+                                      : AtomTheme.dark().copyWith(
+                                          electronSize: 5,
+                                          particleShake: 0.4,
+                                          levelSize: 1)),
                             ),
                           ),
                         ),
@@ -91,8 +102,9 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
                   bottomRight: Radius.circular(12.0)),
             ),
             Material(
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(2.0)),
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.0)),
               elevation: 4.0,
+              type: MaterialType.card,
               child: SizedBox(
                 width: manganeseSize.width,
                 height: manganeseSize.height,

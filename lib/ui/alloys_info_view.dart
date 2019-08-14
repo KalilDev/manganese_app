@@ -76,11 +76,10 @@ class _InfoPagesState extends State<InfoPages> {
     return CustomScrollView(
       slivers: <Widget>[
         SliverAppBar(
-          centerTitle: true,
           title: Container(
               padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
-                  color: Colors.indigo,
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(20.0)),
               child: Text(titles[i])),
           flexibleSpace: FlexibleSpaceBar(
@@ -89,7 +88,7 @@ class _InfoPagesState extends State<InfoPages> {
             fit: BoxFit.cover,
           )),
           expandedHeight: 300,
-          pinned: false,
+          pinned: true,
         ),
         SliverList(
             delegate: SliverChildBuilderDelegate(buildSection, childCount: 2))
