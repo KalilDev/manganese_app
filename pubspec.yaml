@@ -46,6 +46,16 @@ flutter:
     - assets/almn.jpeg
     - assets/simn.jpg
     - assets/periodic_table.png
+    - assets/country_flags/za.png
+    - assets/country_flags/cn.png
+    - assets/country_flags/au.png
+    - assets/country_flags/ga.png
+    - assets/country_flags/br.png
+    - assets/country_flags/in.png
+    - assets/country_flags/my.png
+    - assets/country_flags/ua.png
+    - assets/country_flags/kz.png
+    - assets/country_flags/gh.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

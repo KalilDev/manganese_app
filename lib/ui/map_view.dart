@@ -54,8 +54,7 @@ class _MapViewState extends State<MapView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        SizedBox(
-                            height: 100.0, child: Image.network(c.flagUrl)),
+                        SizedBox(height: 100.0, child: Image.asset(c.flagUrl)),
                         SizedBox(height: 8.0),
                         Text(
                           c.name,
