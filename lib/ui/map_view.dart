@@ -3,6 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:manganese_app/model/country.dart';
 
+final kBrasilBounds =
+    LatLngBounds(LatLng(2.808795, -71.304378), LatLng(-32.000166, -36.1590227));
+
 class MapView extends StatefulWidget {
   @override
   _MapViewState createState() => _MapViewState();
@@ -27,18 +30,11 @@ class _MapViewState extends State<MapView> {
   }
 
   _openCountry(Country c, BuildContext context) {
-    if (c.name == 'Brasil') {
-      if (isOnBrasil) {
-        controller.move(c.latLng, 3);
-        setState(() {
-          isOnBrasil = false;
-        });
-      } else {
-        controller.move(LatLng(-16.7959248, -44.6854487), 8);
-        setState(() {
-          isOnBrasil = true;
-        });
-      }
+    if (c.name == 'Brasil' && !isOnBrasil) {
+      controller.move(LatLng(-16.7959248, -44.6854487), 8);
+      setState(() {
+        isOnBrasil = true;
+      });
     } else {
       showDialog(
           context: context,
@@ -156,6 +152,19 @@ class _MapViewState extends State<MapView> {
   }
 
   _positionCallback(MapPosition pos, bool hasGesture, bool isUserGesture) {
+    if (pos.center == null || pos.zoom == null) return;
+    if (!kBrasilBounds.contains(pos.center)) {
+      if (pos.zoom != 3.0) controller.move(pos.center, 3.0);
+      if (isOnBrasil)
+        setState(() {
+          isOnBrasil = false;
+        });
+    } else {
+      if (!isOnBrasil && pos.zoom > 4)
+        setState(() {
+          isOnBrasil = true;
+        });
+    }
     if (pos.zoom < 4 && isOnBrasil) {
       setState(() {
         isOnBrasil = false;
@@ -169,6 +178,9 @@ class _MapViewState extends State<MapView> {
         ? _buildMarkers().followedBy(_buildTextMarkers()).toList()
         : _buildMarkers();
 
+    const kDarkMapColor = Color(0xFF191a1a);
+    const kLightMapColor = Color(0xFFcad2d3);
+
     return Scaffold(
         body: FlutterMap(
       options: MapOptions(
@@ -180,12 +192,15 @@ class _MapViewState extends State<MapView> {
       mapController: controller,
       layers: [
         new TileLayerOptions(
-          urlTemplate: "https://api.tiles.mapbox.com/v4/"
-              "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? kLightMapColor
+              : kDarkMapColor,
+          urlTemplate: "assets/map/{theme}/{z}/{x}/{y}.png",
+          tileProvider: AssetTileProvider(),
           additionalOptions: {
-            'accessToken':
-                'pk.eyJ1Ijoia2FsaWxkZXYiLCJhIjoiY2p6YWM3bGRjMDB1cDNtbWppYm56Z3ljbSJ9.l1xToqUtWnzYODN-c37ZHg',
-            'id': 'mapbox.streets',
+            'theme': Theme.of(context).brightness == Brightness.light
+                ? 'light'
+                : 'dark'
           },
         ),
         MarkerLayerOptions(
