@@ -28,6 +28,7 @@ dependencies:
   bloc:
   shared_preferences:
   equatable:
+  photo_view:
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +51,7 @@ flutter:
     - assets/almn.jpeg
     - assets/simn.jpg
     - assets/periodic_table.png
+    - assets/periodic_table_dark.png
     - assets/country_flags/za.png
     - assets/country_flags/cn.png
     - assets/country_flags/au.png
