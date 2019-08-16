@@ -55,6 +55,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: children[currentPage],
       ),
       bottomNavigationBar: BottomNavigationBar(
+          unselectedItemColor: Theme.of(context).brightness == Brightness.light
+              ? Theme.of(context).iconTheme.color
+              : null,
+          selectedItemColor: Theme.of(context).brightness == Brightness.light
+              ? Theme.of(context).iconTheme.color
+              : null,
           onTap: (int i) => setState(() => currentPage = i),
           currentIndex: currentPage,
           items: [

@@ -10,7 +10,8 @@ class MoleculesView extends StatelessWidget {
         height: 200,
         width: double.infinity,
         child: CustomPaint(
-          painter: ManganeseDioxidePainter(DefaultTextStyle.of(context).style),
+          painter: ManganeseSulfidePainter(
+              DefaultTextStyle.of(context).style, Theme.of(context).brightness),
         ),
       ),
     );
