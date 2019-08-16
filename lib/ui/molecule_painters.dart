@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 final Map<Brightness, Color> kBondColor = {
   Brightness.light: Colors.black,
-  Brightness.dark: Colors.grey[400]
+  Brightness.dark: Colors.grey[600]
 };
 final Map<Brightness, Color> kManganeseColor = {
   Brightness.light: Colors.blueGrey,
