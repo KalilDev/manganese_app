@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:manganese_app/ui/alloys_info_view.dart';
+import 'package:manganese_app/model/alloy.dart';
+import 'package:manganese_app/model/atom.dart';
 import 'package:manganese_app/ui/atom_painter.dart';
-
-import '../text.dart';
 
 class ManganeseSea extends StatefulWidget {
   @override
@@ -13,11 +12,63 @@ class ManganeseSea extends StatefulWidget {
 
 class _ManganeseSeaState extends State<ManganeseSea>
     with TickerProviderStateMixin {
+  int currentPage = 0;
+
+  Widget _buildList(bool isTablet) {
+    return ListView.builder(
+        itemBuilder: (BuildContext context, int i) {
+          final Alloy alloy = alloys[i];
+          handleTap() {
+            if (isTablet) {
+              setState(() => currentPage = i);
+            } else {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                        body: SizedBox.expand(child: _AlloyView(alloy)),
+                        appBar: AppBar(
+                          title: Text('Manganês'),
+                        ),
+                      )));
+            }
+          }
+
+          return ListTile(title: Text(alloy.name), onTap: handleTap);
+        },
+        itemCount: alloys.length);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      if (constraints.biggest.aspectRatio >= 1) {
+        // TabletLayout
+        return Row(children: <Widget>[
+          Flexible(child: Material(elevation: 4.0, child: _buildList(true))),
+          Expanded(
+            child: _AlloyView(alloys[currentPage]),
+            flex: 2,
+          )
+        ]);
+      } else {
+        // MobileLayout
+        return _buildList(false);
+      }
+    });
+  }
+}
+
+class _AlloyView extends StatefulWidget {
+  _AlloyView(this.alloy);
+  final Alloy alloy;
+  @override
+  __AlloyViewState createState() => __AlloyViewState();
+}
+
+class __AlloyViewState extends State<_AlloyView>
+    with SingleTickerProviderStateMixin {
   Animation<double> _manganeseAnimation;
   AnimationController _animationController;
-  ScrollController scrollController;
-  static const int _kAtomsPerPart = 48;
-  int currentPage = 0;
 
   @override
   void initState() {
@@ -26,227 +77,115 @@ class _ManganeseSeaState extends State<ManganeseSea>
     _manganeseAnimation =
         CurvedAnimation(parent: _animationController, curve: Curves.linear);
     _animationController.repeat();
-    scrollController = ScrollController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _animationController?.dispose();
+    _animationController.dispose();
     super.dispose();
-  }
-
-  AtomTheme _getTheme(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.light
-        ? AtomTheme.light().copyWith(electronSize: 4.0, particleShake: 0.5)
-        : AtomTheme.dark().copyWith(electronSize: 4.0, particleShake: 0.5);
-  }
-
-  Widget buildElementalManganese() {
-    return SliverGrid(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-        delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int i) => AnimatedBuilder(
-                animation: _manganeseAnimation,
-                builder: (BuildContext context, _) {
-                  return Hero(
-                      tag: 'manganese' + i.toString(),
-                      child: Material(
-                        child: CustomPaint(
-                            painter: AtomPainter.manganese(
-                                _manganeseAnimation.value,
-                                style: Theme.of(context).textTheme.body1,
-                                theme: _getTheme(context))),
-                      ));
-                }),
-            childCount: _kAtomsPerPart));
-  }
-
-  Widget buildSiliconManganese() {
-    return SliverGrid(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-        delegate: SliverChildBuilderDelegate((BuildContext context, int i) {
-          final bool isManganese = Random().nextDouble() > 0.3;
-          return AnimatedBuilder(
-              animation: _manganeseAnimation,
-              builder: (BuildContext context, _) {
-                return CustomPaint(
-                    painter: isManganese
-                        ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context))
-                        : AtomPainter.silicon(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context)));
-              });
-        }, childCount: _kAtomsPerPart));
-  }
-
-  Widget buildManguiron() {
-    return SliverGrid(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-        delegate: SliverChildBuilderDelegate((BuildContext context, int i) {
-          final bool isManganese = Random().nextDouble() > 0.2;
-          return AnimatedBuilder(
-              animation: _manganeseAnimation,
-              builder: (BuildContext context, _) {
-                return CustomPaint(
-                    painter: isManganese
-                        ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context))
-                        : AtomPainter.iron(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context)));
-              });
-        }, childCount: _kAtomsPerPart));
-  }
-
-  Widget buildAluminoganese() {
-    return SliverGrid(
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-        delegate: SliverChildBuilderDelegate((BuildContext context, int i) {
-          final bool isManganese = Random().nextDouble() > 0.985;
-          return AnimatedBuilder(
-              animation: _manganeseAnimation,
-              builder: (BuildContext context, _) {
-                return CustomPaint(
-                    painter: isManganese
-                        ? AtomPainter.manganese(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context))
-                        : AtomPainter.aluminum(_manganeseAnimation.value,
-                            style: Theme.of(context).textTheme.body1,
-                            theme: _getTheme(context)));
-              });
-        }, childCount: _kAtomsPerPart));
-  }
-
-  Widget buildAppBar() {
-    return SliverAppBar(
-      title: Container(
-          padding: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.circular(20.0)),
-          child: const Text(manganese)),
-      flexibleSpace: FlexibleSpaceBar(
-          background: Image.asset(
-        manganeseImg,
-        fit: BoxFit.cover,
-      )),
-      expandedHeight: 300,
-      pinned: true,
-    );
-  }
-
-  void addListener(BoxConstraints size) {
-    final double sizeOf4 = size.maxWidth;
-    final int rowsPerPart = (_kAtomsPerPart / 4).ceil();
-    final double sizeOfPart = (sizeOf4 / 4) * rowsPerPart + 100;
-    scrollController.addListener(() {
-      final double current = scrollController.position.extentBefore +
-          (scrollController.position.viewportDimension / 2) -
-          300;
-      int currentPage = (current / sizeOfPart).floor();
-      if (currentPage != this.currentPage && currentPage > -1) {
-        setState(() {
-          this.currentPage = currentPage;
-        });
-      }
-    });
-  }
-
-  Widget buildHeader(int i) {
-    return SliverPersistentHeader(
-        delegate: MetalHeaderDelegate(
-      height: 100.0,
-      child: Material(
-        elevation: 8.0,
-        color: Theme.of(context).accentColor,
-        child: SizedBox(
-          height: 100,
-          child: Center(
-            child: Text(
-              titles[i],
-              style: Theme.of(context)
-                  .textTheme
-                  .title
-                  .copyWith(color: Theme.of(context).colorScheme.onSecondary),
-            ),
-          ),
-        ),
-      ),
-    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget buildAtom(BuildContext context, int i) {
+      final double random = Random().nextDouble();
+      List<double> vals = widget.alloy.probabilityAtomMap.keys.toList();
+      vals.sort();
+      Atom atom;
+      for (double val in vals.reversed) {
+        if (random >= 1 - val) atom = widget.alloy.probabilityAtomMap[val];
+      }
+      if (atom == null)
+        print(
+            '${random} + ${widget.alloy.probabilityAtomMap.toString()} + ${1 - random}');
+      return AspectRatio(
+        aspectRatio: 1,
+        child: AnimatedBuilder(
+          animation: _manganeseAnimation,
+          builder: (_, __) => CustomPaint(
+            painter: AtomPainter.fromAtom(_manganeseAnimation.value,
+                atom: atom,
+                style: DefaultTextStyle.of(context).style,
+                theme: Theme.of(context).brightness == Brightness.light
+                    ? AtomTheme.light().copyWith(
+                        electronSize: 5, particleShake: 0.4, levelSize: 1)
+                    : AtomTheme.dark().copyWith(
+                        electronSize: 5, particleShake: 0.4, levelSize: 1)),
+          ),
+        ),
+      );
+    }
+
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      if (!scrollController.hasListeners) addListener(constraints);
-
-      return Scaffold(
-          body: Stack(
-        children: <Widget>[
-          CustomScrollView(
-            controller: scrollController,
-            slivers: <Widget>[
-              buildAppBar(),
-              buildHeader(0),
-              buildElementalManganese(),
-              buildHeader(1),
-              buildSiliconManganese(),
-              buildHeader(2),
-              buildManguiron(),
-              buildHeader(3),
-              buildAluminoganese()
-            ],
-          ),
-          Center(
-            child: Material(
-              borderRadius: BorderRadius.circular(20.0),
-              clipBehavior: Clip.antiAlias,
-              elevation: 8.0,
-              child: InkWell(
-                onTap: () => Navigator.of(context).push<void>(MaterialPageRoute(
-                    builder: (BuildContext context) => InfoPages(currentPage))),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Text(texts[currentPage].substring(0, 21) + '...'),
+      final double aspectRatio =
+          (constraints.maxWidth * 4 / 3) / constraints.maxHeight - 0.1;
+      print(aspectRatio);
+      final bool isTablet = aspectRatio >= 1;
+      if (isTablet) {
+        final double childSize = constraints.maxWidth / 4;
+        final double kStep1 = 200;
+        final double kStep2 = 160;
+        final double kStep3 = 100;
+        Widget atomWidget = GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: childSize > kStep1 ? 2 : 1),
+            itemBuilder: buildAtom);
+        return Stack(
+          children: <Widget>[
+            if (childSize > kStep3)
+              Positioned(
+                child: SizedBox(
+                    height: constraints.maxHeight,
+                    width: childSize,
+                    child: atomWidget),
+              ),
+            Positioned(
+              child: SizedBox(
+                height: constraints.maxHeight,
+                width: (childSize > kStep2 ? 2 : childSize > kStep3 ? 3 : 4) *
+                    childSize,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Image.asset(widget.alloy.assetUrl),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(lipsum),
+                      ),
+                    ],
+                  ),
                 ),
               ),
+              left: childSize > 100 ? childSize : 0,
             ),
-          )
-        ],
-      ));
+            if (childSize > kStep2)
+              Positioned(
+                child: SizedBox(
+                    height: constraints.maxHeight,
+                    width: childSize,
+                    child: atomWidget),
+                right: 0,
+              ),
+          ],
+        );
+      } else {
+        return CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(child: Image.asset(widget.alloy.assetUrl)),
+            SliverToBoxAdapter(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(widget.alloy.text),
+            )),
+            SliverGrid(
+                delegate: SliverChildBuilderDelegate(buildAtom),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4))
+          ],
+        );
+      }
     });
-  }
-}
-
-class MetalHeaderDelegate extends SliverPersistentHeaderDelegate {
-  MetalHeaderDelegate({
-    @required this.height,
-    @required this.child,
-  });
-  final double height;
-  final Widget child;
-  @override
-  double get minExtent => height;
-  @override
-  double get maxExtent => height;
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return SizedBox.expand(child: child);
-  }
-
-  @override
-  bool shouldRebuild(MetalHeaderDelegate oldDelegate) {
-    return height != oldDelegate.height || child != oldDelegate.child;
   }
 }
