@@ -46,10 +46,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - assets/manganes.jpg
-    - assets/femg.png
-    - assets/almn.jpeg
-    - assets/simn.jpg
+    - assets/alloy/almn.png
+    - assets/alloy/femn.png
+    - assets/alloy/mn.jpg
+    - assets/alloy/simn.jpg
+    - assets/alloy/stmn.png
     - assets/periodic_table.png
     - assets/periodic_table_dark.png
     - assets/country_flags/za.png
@@ -504,6 +505,23 @@ flutter:
     - assets/map/light/6/26/37.png
     - assets/map/light/6/26/38.png
     - assets/map/light/6/26/39.png
+
+  fonts:
+      - family: Roboto
+        fonts:
+          - asset: fonts/Roboto/Roboto-Thin.ttf
+            weight: 100
+          - asset: fonts/Roboto/Roboto-Light.ttf
+            weight: 300
+          - asset: fonts/Roboto/Roboto-Regular.ttf
+            weight: 400
+          - asset: fonts/Roboto/Roboto-Medium.ttf
+            weight: 500
+          - asset: fonts/Roboto/Roboto-Bold.ttf
+            weight: 700
+          - asset: fonts/Roboto/Roboto-Black.ttf
+            weight: 900
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:
