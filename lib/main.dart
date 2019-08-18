@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manganese_app/ui/manganese_alloys_view.dart';
@@ -7,8 +8,10 @@ import 'package:manganese_app/ui/periodic_table_view.dart';
 
 import 'bloc/bloc.dart';
 
-void main() =>
-    runApp(BlocProvider(builder: (_) => SettingsManagerBloc(), child: MyApp()));
+void main() {
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+  runApp(BlocProvider(builder: (_) => SettingsManagerBloc(), child: MyApp()));
+}
 
 final ThemeData lightTheme = ThemeData(primarySwatch: Colors.indigo);
 final ThemeData darkTheme = ThemeData(
@@ -41,6 +44,7 @@ class MyApp extends StatelessWidget {
           theme: primary,
           darkTheme: secondary,
           home: MyHomePage(state.themeOptions),
+          debugShowCheckedModeBanner: false,
         );
       },
     );
@@ -84,23 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
     }
     return Scaffold(
-      appBar: currentPage == 2
-          ? null
-          : AppBar(
-              title: Text('Manganês'),
-              actions: <Widget>[
-                IconButton(
-                    icon: Icon(theme),
-                    onPressed: () {
-                      final int index =
-                          ThemeOptions.values.indexOf(widget.options) + 1;
-                      int tgt = index == ThemeOptions.values.length ? 0 : index;
-                      BlocProvider.of<SettingsManagerBloc>(context).dispatch(
-                          UpdateSettingsEvent(
-                              themeOptions: ThemeOptions.values[tgt]));
-                    })
-              ],
-            ),
+      appBar: AppBar(
+        title: Text('Manganês'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(theme),
+              onPressed: () {
+                final int index =
+                    ThemeOptions.values.indexOf(widget.options) + 1;
+                int tgt = index == ThemeOptions.values.length ? 0 : index;
+                BlocProvider.of<SettingsManagerBloc>(context).dispatch(
+                    UpdateSettingsEvent(
+                        themeOptions: ThemeOptions.values[tgt]));
+              })
+        ],
+      ),
       body: AnimatedSwitcher(
         duration: Duration(milliseconds: 400),
         child: children[currentPage],

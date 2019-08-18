@@ -8,25 +8,31 @@ import './bloc.dart';
 class SettingsManagerBloc
     extends Bloc<SettingsManagerEvent, SettingsManagerState> {
   _getPreferences() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final int themeOptions = prefs.getInt('themeOptions');
-    final ThemeOptions options = themeOptions == null
-        ? null
-        : ThemeOptions.values.elementAt(themeOptions);
-    dispatch(LoadedSettingsEvent(themeOptions: options));
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final int themeOptions = prefs.getInt('themeOptions');
+      final ThemeOptions options = themeOptions == null
+          ? null
+          : ThemeOptions.values.elementAt(themeOptions);
+      dispatch(LoadedSettingsEvent(themeOptions: options));
+    } catch (e) {
+      dispatch(LoadedSettingsEvent(themeOptions: ThemeOptions.auto));
+    }
   }
 
   _updateSettings(UpdateSettingsEvent event) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
     ThemeOptions options = event.themeOptions;
-    if (options == null) {
-      final int themeOptions = prefs.getInt('themeOptions');
-      options = themeOptions == null
-          ? null
-          : ThemeOptions.values.elementAt(themeOptions);
-    } else {
-      prefs.setInt('themeOptions', ThemeOptions.values.indexOf(options));
-    }
+    try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (options == null) {
+        final int themeOptions = prefs.getInt('themeOptions');
+        options = themeOptions == null
+            ? null
+            : ThemeOptions.values.elementAt(themeOptions);
+      } else {
+        prefs.setInt('themeOptions', ThemeOptions.values.indexOf(options));
+      }
+    } catch (e) {}
     dispatch(LoadedSettingsEvent(themeOptions: options));
   }
 
