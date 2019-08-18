@@ -5,9 +5,6 @@ import 'package:photo_view/photo_view.dart';
 
 import 'atom_painter.dart';
 
-const Color kLightImgBG = Color(0xFFffffff);
-const Color kDarkImgBG = Color(0xFF3f3f3c);
-
 class PeriodicTableView extends StatefulWidget {
   @override
   _PeriodicTableViewState createState() => _PeriodicTableViewState();
@@ -36,12 +33,12 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
 
   Widget _buildPositioned(BuildContext context, BoxConstraints constraints) {
     /// Constants
-    const int kWidth = 1496;
-    const int kHeight = 1100;
-    const int kMStartHeight = 469;
-    const int kMStartWidth = 504;
-    const int kMEndHeight = 543;
-    const int kMEndWidth = 577;
+    const int kWidth = 2339;
+    const int kHeight = 1654;
+    const int kMStartHeight = 609;
+    const int kMStartWidth = 868;
+    const int kMEndHeight = 741;
+    const int kMEndWidth = 981;
     final Size size = constraints.biggest;
 
     /// Dependent on rotation
@@ -167,9 +164,7 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
             PhotoView.customChild(
               childSize: constraints.biggest,
               backgroundDecoration: BoxDecoration(
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? kLightImgBG
-                      : kDarkImgBG),
+                  color: Theme.of(context).scaffoldBackgroundColor),
               child: Stack(children: <Widget>[
                 Center(
                     child: Image.asset(
