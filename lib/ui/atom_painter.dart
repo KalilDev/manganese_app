@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:manganese_app/model/atom.dart';
 
 const double phi = 1.6180339887498948482045868343656;
 const double goldenAngle = 2.3999632297286533222315555066336;
@@ -96,104 +97,28 @@ class AtomPainter extends CustomPainter {
   final TextStyle style;
   final AtomTheme theme;
 
+  factory AtomPainter.fromAtom(double movement,
+      {@required Atom atom,
+      Brightness brightness,
+      TextStyle style,
+      AtomTheme theme}) {
+    assert(brightness == null || theme == null);
+    AtomTheme atomTheme = theme ??
+        (brightness ??Brightness.light == Brightness.light ? AtomTheme.light() : AtomTheme.dark());
+
+    return AtomPainter(movement,
+        protons: atom.protons,
+        neutrons: atom.neutrons,
+        electronsPerLevel: atom.electronsPerLevel,
+        symbol: atom.symbol,
+        style: style,
+        theme: atomTheme);
+  }
   factory AtomPainter.manganese(double movement,
-      {TextStyle style, Brightness brightness, AtomTheme theme}) {
-    assert(brightness == null || theme == null);
-    final AtomTheme t = theme ??
-        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
-    const int kProtons = 25;
-    const int kNeutrons = 30;
-    const Map<int, int> kElectronsPerLevel = <int, int>{
-      4: 2,
-      3: 13,
-      2: 8,
-      1: 2
-    };
-    const String kSymbol = 'Mn';
-    return AtomPainter(movement,
-        protons: kProtons,
-        neutrons: kNeutrons,
-        electronsPerLevel: kElectronsPerLevel,
-        symbol: kSymbol,
-        style: style,
-        theme: t);
-  }
-
-  factory AtomPainter.silicon(double movement,
-      {TextStyle style, Brightness brightness, AtomTheme theme}) {
-    assert(brightness == null || theme == null);
-    final AtomTheme t = theme ??
-        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
-    const int kProtons = 14;
-    const int kNeutrons = 14;
-    const Map<int, int> kElectronsPerLevel = <int, int>{3: 4, 2: 8, 1: 2};
-    const String kSymbol = 'Si';
-    return AtomPainter(movement,
-        protons: kProtons,
-        neutrons: kNeutrons,
-        electronsPerLevel: kElectronsPerLevel,
-        symbol: kSymbol,
-        style: style,
-        theme: t);
-  }
-
-  factory AtomPainter.iron(double movement,
-      {TextStyle style, Brightness brightness, AtomTheme theme}) {
-    assert(brightness == null || theme == null);
-    final AtomTheme t = theme ??
-        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
-    const int kProtons = 26;
-    const int kNeutrons = 29;
-    const Map<int, int> kElectronsPerLevel = <int, int>{
-      4: 2,
-      3: 14,
-      2: 8,
-      1: 2
-    };
-    const String kSymbol = 'Fe';
-    return AtomPainter(movement,
-        protons: kProtons,
-        neutrons: kNeutrons,
-        electronsPerLevel: kElectronsPerLevel,
-        symbol: kSymbol,
-        style: style,
-        theme: t);
-  }
-
-  factory AtomPainter.carbon(double movement,
-      {TextStyle style, Brightness brightness, AtomTheme theme}) {
-    assert(brightness == null || theme == null);
-    final AtomTheme t = theme ??
-        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
-    const int kProtons = 6;
-    const int kNeutrons = 6;
-    const Map<int, int> kElectronsPerLevel = <int, int>{2: 4, 1: 2};
-    const String kSymbol = 'C';
-    return AtomPainter(movement,
-        protons: kProtons,
-        neutrons: kNeutrons,
-        electronsPerLevel: kElectronsPerLevel,
-        symbol: kSymbol,
-        style: style,
-        theme: t);
-  }
-
-  factory AtomPainter.aluminum(double movement,
-      {TextStyle style, Brightness brightness, AtomTheme theme}) {
-    assert(brightness == null || theme == null);
-    final AtomTheme t = theme ??
-        (brightness == Brightness.dark ? AtomTheme.dark() : AtomTheme.light());
-    const int kProtons = 13;
-    const int kNeutrons = 13;
-    const Map<int, int> kElectronsPerLevel = <int, int>{3: 3, 2: 8, 1: 2};
-    const String kSymbol = 'Al';
-    return AtomPainter(movement,
-        protons: kProtons,
-        neutrons: kNeutrons,
-        electronsPerLevel: kElectronsPerLevel,
-        symbol: kSymbol,
-        style: style,
-        theme: t);
+      {Brightness brightness, TextStyle style, AtomTheme theme}) {
+    final Atom atom = Atom.manganese();
+    return AtomPainter.fromAtom(movement,
+        atom: atom, brightness: brightness, style: style, theme: theme);
   }
 
   @override
