@@ -149,10 +149,12 @@ class __AlloyViewState extends State<_AlloyView>
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      Image.asset(widget.alloy.assetUrl),
+                      buildImage(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(lipsum),
+                        child: Text(
+                          widget.alloy.text,
+                        ),
                       ),
                     ],
                   ),
@@ -173,7 +175,7 @@ class __AlloyViewState extends State<_AlloyView>
       } else {
         return CustomScrollView(
           slivers: <Widget>[
-            SliverToBoxAdapter(child: Image.asset(widget.alloy.assetUrl)),
+            SliverToBoxAdapter(child: buildImage()),
             SliverToBoxAdapter(
                 child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -187,5 +189,16 @@ class __AlloyViewState extends State<_AlloyView>
         );
       }
     });
+  }
+
+  Widget buildImage() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+          elevation: 4.0,
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(30.0),
+          child: Image.asset(widget.alloy.assetUrl)),
+    );
   }
 }
