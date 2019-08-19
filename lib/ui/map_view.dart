@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:manganese_app/model/country.dart';
+import 'package:manganese_app/text.dart';
 
 final kBrasilBounds =
     LatLngBounds(LatLng(2.808795, -71.304378), LatLng(-32.000166, -36.1590227));
@@ -14,6 +17,8 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   MapController controller;
   bool isOnBrasil = false;
+  bool canZoomIn = true;
+  bool canZoomOut = false;
 
   @override
   void initState() {
@@ -31,7 +36,7 @@ class _MapViewState extends State<MapView> {
 
   _openCountry(Country c, BuildContext context) {
     if (c.name == 'Brasil' && !isOnBrasil) {
-      controller.move(LatLng(-16.7959248, -44.6854487), 8);
+      controller.move(LatLng(-3.952825, -67.664360), 8);
       setState(() {
         isOnBrasil = true;
       });
@@ -73,40 +78,42 @@ class _MapViewState extends State<MapView> {
     return Marker(
         point: pos,
         height: 200,
-        width: 200,
+        width: 300,
         builder: (BuildContext context) {
           return Center(
-            child: Text(
-              text,
-              style: DefaultTextStyle.of(context)
-                  .style
-                  .copyWith(color: Colors.black, shadows: [
-                BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 4.0,
-                    spreadRadius: 5,
-                    offset: Offset(0, 0)),
-                BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 4.0,
-                    spreadRadius: 5,
-                    offset: Offset(-1, -1)),
-                BoxShadow(
-                    color: Colors.white,
-                    blurRadius: 4.0,
-                    spreadRadius: 5,
-                    offset: Offset(1, 1))
-              ]),
-            ),
+            child: Text(text),
+          );
+        });
+  }
+
+  Marker _buildPinpoint(String text, LatLng pos) {
+    return Marker(
+        anchorPos: AnchorPos.align(AnchorAlign.top),
+        height: 200,
+        width: 400,
+        point: pos,
+        builder: (BuildContext context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[Text(text), Icon(Icons.pin_drop)],
           );
         });
   }
 
   List<Marker> _buildTextMarkers() {
     return [
+      //_buildPinpoint('Quem mora aqui mama', LatLng(-19.9075495, -43.9076999)),
+      _buildPinpoint(portoDeSantana, LatLng(-0.037562, -51.1946795)),
+      _buildPinpoint(fortunaLtda, LatLng(-14.4708409, -48.4829318)),
+      _buildPinpoint(mariana, LatLng(-20.3770549, -43.4538469)),
       _buildTextMarker(
-          'Mineiração é muito ruim. Não faça da Africa o ancapistão.',
-          LatLng(-17.3405181, -44.9550076))
+          genericMap0 + '\n' + genericMap1, LatLng(-3.952825, -67.664360)),
+      _buildTextMarker(genericMap2, LatLng(-10.110603, -62.772693)),
+      _buildTextMarker(genericMap3, LatLng(-16.452107, -60.752372)),
+      _buildTextMarker(genericMap4, LatLng(-23.276005, -56.498772)),
+      _buildTextMarker(genericMap5, LatLng(-27.201619, -52.223073)),
     ];
   }
 
@@ -152,24 +159,64 @@ class _MapViewState extends State<MapView> {
   }
 
   _positionCallback(MapPosition pos, bool hasGesture, bool isUserGesture) {
-    if (pos.center == null || pos.zoom == null) return;
+    if (pos.center == null || pos.zoom == null || !mounted) return;
+    final bool canZoomIn = controller.zoom < 6;
+    final bool canZoomOut = controller.zoom > 3;
     if (!kBrasilBounds.contains(pos.center)) {
       if (pos.zoom != 3.0) controller.move(pos.center, 3.0);
       if (isOnBrasil)
         setState(() {
+          this.canZoomIn = false;
+          this.canZoomOut = false;
           isOnBrasil = false;
         });
+      else {
+        if (this.canZoomOut || this.canZoomIn)
+          setState(() {
+            this.canZoomOut = false;
+            this.canZoomIn = false;
+          });
+      }
     } else {
-      if (!isOnBrasil && pos.zoom > 4)
+      if (pos.zoom > 4.5)
         setState(() {
           isOnBrasil = true;
+          this.canZoomOut = true;
+          this.canZoomIn = canZoomIn;
+        });
+      else if (this.canZoomOut != canZoomOut ||
+          this.canZoomIn != canZoomIn ||
+          isOnBrasil)
+        setState(() {
+          isOnBrasil = false;
+          this.canZoomIn = canZoomIn;
+          this.canZoomOut = canZoomOut;
         });
     }
-    if (pos.zoom < 4 && isOnBrasil) {
-      setState(() {
-        isOnBrasil = false;
-      });
-    }
+  }
+
+  _zoomIn() {
+    controller.move(controller.center, controller.zoom + 0.2);
+  }
+
+  _zoomOut() {
+    controller.move(controller.center, controller.zoom - 0.2);
+  }
+
+  _buildZoomButtons() {
+    return Positioned(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          IconButton(
+              icon: Icon(Icons.add), onPressed: canZoomIn ? _zoomIn : null),
+          IconButton(
+              icon: Icon(Icons.remove),
+              onPressed: canZoomOut ? _zoomOut : null),
+        ],
+      ),
+      right: 0.0,
+    );
   }
 
   @override
@@ -182,30 +229,36 @@ class _MapViewState extends State<MapView> {
     const kLightMapColor = Color(0xFFcad2d3);
 
     return Scaffold(
-        body: FlutterMap(
-      options: MapOptions(
-          onPositionChanged: _positionCallback,
-          center: LatLng(0, 0),
-          zoom: 3.0,
-          maxZoom: 6.0,
-          minZoom: 3.0),
-      mapController: controller,
-      layers: [
-        new TileLayerOptions(
-          backgroundColor: Theme.of(context).brightness == Brightness.light
-              ? kLightMapColor
-              : kDarkMapColor,
-          urlTemplate: "assets/map/{theme}/{z}/{x}/{y}.png",
-          tileProvider: AssetTileProvider(),
-          additionalOptions: {
-            'theme': Theme.of(context).brightness == Brightness.light
-                ? 'light'
-                : 'dark'
-          },
+        body: Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        FlutterMap(
+          options: MapOptions(
+              onPositionChanged: _positionCallback,
+              center: LatLng(-3.952825, -67.664360),
+              zoom: 3.0,
+              maxZoom: 6.0,
+              minZoom: 3.0),
+          mapController: controller,
+          layers: [
+            new TileLayerOptions(
+              backgroundColor: Theme.of(context).brightness == Brightness.light
+                  ? kLightMapColor
+                  : kDarkMapColor,
+              urlTemplate: "assets/map/{theme}/{z}/{x}/{y}.png",
+              tileProvider: AssetTileProvider(),
+              additionalOptions: {
+                'theme': Theme.of(context).brightness == Brightness.light
+                    ? 'light'
+                    : 'dark'
+              },
+            ),
+            MarkerLayerOptions(
+              markers: markers,
+            ),
+          ],
         ),
-        MarkerLayerOptions(
-          markers: markers,
-        ),
+        if (Platform.isWindows) _buildZoomButtons()
       ],
     ));
   }
