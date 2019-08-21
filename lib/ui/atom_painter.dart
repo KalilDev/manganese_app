@@ -104,7 +104,9 @@ class AtomPainter extends CustomPainter {
       AtomTheme theme}) {
     assert(brightness == null || theme == null);
     AtomTheme atomTheme = theme ??
-        (brightness ??Brightness.light == Brightness.light ? AtomTheme.light() : AtomTheme.dark());
+        (brightness ?? Brightness.light == Brightness.light
+            ? AtomTheme.light()
+            : AtomTheme.dark());
 
     return AtomPainter(movement,
         protons: atom.protons,
@@ -131,10 +133,62 @@ class AtomPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     // Constants
     final double _kSizeOfElectron = theme.electronSize ?? size.width / 60;
-    final double _kOnePart = size.width /
-        (2 + electronsPerLevel.keys.reduce((int i, int i2) => i + i2)) /
-        2;
     final Offset _kCenter = Offset(size.width / 2, size.height / 2);
+    // Nucleus
+    final double _kParticleSize = theme.particleSize ?? size.width / 100;
+    final double _kParticleMovement =
+        theme.particleShake ?? _kParticleSize / 16;
+    const int _kParticleMovementFrequency = 40;
+    final Paint _kProtonPaint = Paint()..color = theme.protonColor;
+    final Paint _kNeutronPaint = Paint()..color = theme.neutronColor;
+    final double nucleusSize =
+        (protons / (10 + protons / 140 * 25)) * _kParticleSize * 7;
+    List<Offset> scheduledProtons = List();
+    List<Offset> scheduledNeutrons = List();
+    void drawParticle(Offset position, bool isProton) {
+      double angle = 2 * pi * _kParticleMovementFrequency * movement;
+      angle = isProton ? angle : -angle;
+      try {
+        final Offset realPos = position.translate(
+            cos(angle) * _kParticleMovement, sin(angle) * _kParticleMovement);
+        isProton
+            ? scheduledProtons.add(realPos)
+            : scheduledNeutrons.add(realPos);
+      } catch (e) {
+        return;
+      }
+    }
+
+    final double _kOnePart = size.width /
+            (2 + electronsPerLevel.keys.reduce((int i, int i2) => i + i2)) /
+            2 -
+        (nucleusSize /
+                (electronsPerLevel.keys.reduce((int i, int i2) => i + i2))) /
+            2;
+
+    void drawParticles(int n, bool isProton) {
+      for (int i = 0; i <= n; i++) {
+        final double theta = i * goldenAngle + (isProton ? pi / 2 + 0.5 : 0.0);
+        final double r = sqrt(i) / sqrt(n);
+        drawParticle(
+            _kCenter.translate(cos(theta) * r * nucleusSize / 2,
+                sin(theta) * r * nucleusSize / 2),
+            isProton);
+      }
+    }
+
+    void commitScheduled() {
+      final int m = max(scheduledNeutrons.length, scheduledProtons.length);
+      for (int i = 0; i < m; i++) {
+        if (scheduledProtons.length > i) {
+          canvas.drawCircle(scheduledProtons[i], _kParticleSize, _kProtonPaint);
+        }
+        if (scheduledNeutrons.length > i) {
+          canvas.drawCircle(
+              scheduledNeutrons[i], _kParticleSize, _kNeutronPaint);
+        }
+      }
+    }
 
     // Energy level painter
     final Paint _kEnergyLevelPainter = Paint()
@@ -169,40 +223,9 @@ class AtomPainter extends CustomPainter {
       drawElectrons(electrons, radius: levelRadius, frequency: frequency);
     }
 
-    // Nucleus
-    final double _kParticleSize = theme.particleSize ?? size.width / 100;
-    final double _kParticleMovement =
-        theme.particleShake ?? _kParticleSize / 16;
-    const int _kParticleMovementFrequency = 40;
-    final Paint _kProtonPaint = Paint()..color = theme.protonColor;
-    final Paint _kNeutronPaint = Paint()..color = theme.neutronColor;
-    final double nucleusSize = (protons / 10) * _kParticleSize * 7;
-    void drawParticle(Offset position, bool isProton) {
-      double angle = 2 * pi * _kParticleMovementFrequency * movement;
-      angle = isProton ? angle : -angle;
-      try {
-        final Offset realPos = position.translate(
-            cos(angle) * _kParticleMovement, sin(angle) * _kParticleMovement);
-        canvas.drawCircle(
-            realPos, _kParticleSize, isProton ? _kProtonPaint : _kNeutronPaint);
-      } catch (e) {
-        return;
-      }
-    }
-
-    void drawParticles(int n, bool isProton) {
-      for (int i = 0; i <= n; i++) {
-        final double theta = i * goldenAngle + (isProton ? pi / 2 + 0.5 : 0.0);
-        final double r = sqrt(i) / sqrt(n);
-        drawParticle(
-            _kCenter.translate(cos(theta) * r * nucleusSize / 2,
-                sin(theta) * r * nucleusSize / 2),
-            isProton);
-      }
-    }
-
     drawParticles(neutrons, false);
     drawParticles(protons, true);
+    commitScheduled();
     if (style != null)
       TextPainter(
           text: TextSpan(
