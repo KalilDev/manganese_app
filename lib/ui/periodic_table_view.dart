@@ -87,8 +87,7 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
         Offset(kMStartWidth * pixelSize, kMStartHeight * pixelSize);
     final double maxHeight =
         min(manganeseBeginOffset.dy, size.width / 4 + 40.0);
-    double textFactor =
-        DefaultTextStyle.of(context).style.fontSize * 0.8 * 8 - maxHeight + 30;
+    double textSize = DefaultTextStyle.of(context).style.fontSize * 0.8 * 8;
     return Positioned(
         bottom: size.height - manganeseBeginOffset.dy - manganeseSize.height,
         left: manganeseBeginOffset.dx,
@@ -101,7 +100,7 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
               transitionBuilder: (Widget child, Animation<double> anim) {
                 return SizedBox(
                   height: maxHeight,
-                  width: maxHeight - 30 + textFactor,
+                  width: max(textSize, maxHeight - 30),
                   child: SlideTransition(
                     position: Tween<Offset>(
                             end: Offset.zero,

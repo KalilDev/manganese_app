@@ -96,9 +96,6 @@ class __AlloyViewState extends State<_AlloyView>
       for (double val in vals.reversed) {
         if (random >= 1 - val) atom = widget.alloy.probabilityAtomMap[val];
       }
-      if (atom == null)
-        print(
-            '${random} + ${widget.alloy.probabilityAtomMap.toString()} + ${1 - random}');
       return AspectRatio(
         aspectRatio: 1,
         child: AnimatedBuilder(

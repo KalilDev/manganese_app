@@ -111,12 +111,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: children[currentPage],
       ),
       bottomNavigationBar: BottomNavigationBar(
-          /*unselectedItemColor: Theme.of(context).brightness == Brightness.light
+          unselectedItemColor: Theme.of(context).brightness == Brightness.light
               ? Theme.of(context).iconTheme.color
               : null,
           selectedItemColor: Theme.of(context).brightness == Brightness.light
               ? Theme.of(context).primaryColor
-              : null,*/
+              : null,
           onTap: (int i) => setState(() => currentPage = i),
           currentIndex: currentPage,
           items: [
@@ -126,8 +126,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(Icons.pin_drop), title: Text('Mapa')),
             BottomNavigationBarItem(
                 icon: Icon(Icons.dashboard), title: Text('Ligas')),
-            /*BottomNavigationBarItem(
-                icon: Icon(Icons.share), title: Text('Compostos'))*/
+            BottomNavigationBarItem(
+                icon: Icon(Icons.share), title: Text('Compostos'))
           ]),
     );
   }
