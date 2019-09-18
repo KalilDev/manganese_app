@@ -96,12 +96,31 @@ class __AlloyViewState extends State<_AlloyView>
       for (double val in vals.reversed) {
         if (random >= 1 - val) atom = widget.alloy.probabilityAtomMap[val];
       }
-      return AspectRatio(
-        aspectRatio: 1,
-        child: AnimatedBuilder(
-          animation: _manganeseAnimation,
-          builder: (_, __) => CustomPaint(
-            painter: AtomPainter.fromAtom(_manganeseAnimation.value,
+      final double random2 = Random().nextDouble();
+      if (random2 <= 0.2) {
+        /// Animate
+        return AspectRatio(
+          aspectRatio: 1,
+          child: AnimatedBuilder(
+            animation: _manganeseAnimation,
+            builder: (_, __) => CustomPaint(
+              painter: AtomPainter.fromAtom(_manganeseAnimation.value,
+                  atom: atom,
+                  style: DefaultTextStyle.of(context).style,
+                  theme: Theme.of(context).brightness == Brightness.light
+                      ? AtomTheme.light().copyWith(
+                          electronSize: 5, particleShake: 0.4, levelSize: 1)
+                      : AtomTheme.dark().copyWith(
+                          electronSize: 5, particleShake: 0.4, levelSize: 1)),
+            ),
+          ),
+        );
+      } else {
+        /// Do not animate
+        return AspectRatio(
+          aspectRatio: 1,
+          child: CustomPaint(
+            painter: AtomPainter.fromAtom(0.21 * i,
                 atom: atom,
                 style: DefaultTextStyle.of(context).style,
                 theme: Theme.of(context).brightness == Brightness.light
@@ -110,8 +129,8 @@ class __AlloyViewState extends State<_AlloyView>
                     : AtomTheme.dark().copyWith(
                         electronSize: 5, particleShake: 0.4, levelSize: 1)),
           ),
-        ),
-      );
+        );
+      }
     }
 
     return LayoutBuilder(
