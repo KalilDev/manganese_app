@@ -5,18 +5,18 @@ import './enums.dart';
 
 @immutable
 abstract class SettingsManagerEvent extends Equatable {
-  SettingsManagerEvent({ThemeOptions themeOptions})
+  SettingsManagerEvent({ThemeMode themeOptions})
       : themeOptions = themeOptions,
-        super([themeOptions ?? ThemeOptions.auto]);
-  final ThemeOptions themeOptions;
+        super([themeOptions ?? ThemeMode.light]);
+  final ThemeMode themeOptions;
 }
 
 class LoadedSettingsEvent extends SettingsManagerEvent {
-  LoadedSettingsEvent({ThemeOptions themeOptions})
+  LoadedSettingsEvent({ThemeMode themeOptions})
       : super(themeOptions: themeOptions);
 }
 
 class UpdateSettingsEvent extends SettingsManagerEvent {
-  UpdateSettingsEvent({ThemeOptions themeOptions})
+  UpdateSettingsEvent({ThemeMode themeOptions})
       : super(themeOptions: themeOptions);
 }

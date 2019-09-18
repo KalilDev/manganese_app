@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
@@ -17,8 +15,6 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   MapController controller;
   bool isOnBrasil = false;
-  bool canZoomIn = true;
-  bool canZoomOut = false;
 
   @override
   void initState() {
@@ -160,37 +156,19 @@ class _MapViewState extends State<MapView> {
 
   _positionCallback(MapPosition pos, bool hasGesture, bool isUserGesture) {
     if (pos.center == null || pos.zoom == null || !mounted) return;
-    final bool canZoomIn = controller.zoom < 6;
-    final bool canZoomOut = controller.zoom > 3;
     if (!kBrasilBounds.contains(pos.center)) {
-      if (pos.zoom != 3.0) controller.move(pos.center, 3.0);
       if (isOnBrasil)
         setState(() {
-          this.canZoomIn = false;
-          this.canZoomOut = false;
           isOnBrasil = false;
         });
-      else {
-        if (this.canZoomOut || this.canZoomIn)
-          setState(() {
-            this.canZoomOut = false;
-            this.canZoomIn = false;
-          });
-      }
     } else {
       if (pos.zoom > 4.5)
         setState(() {
           isOnBrasil = true;
-          this.canZoomOut = true;
-          this.canZoomIn = canZoomIn;
         });
-      else if (this.canZoomOut != canZoomOut ||
-          this.canZoomIn != canZoomIn ||
-          isOnBrasil)
+      else if (isOnBrasil)
         setState(() {
           isOnBrasil = false;
-          this.canZoomIn = canZoomIn;
-          this.canZoomOut = canZoomOut;
         });
     }
   }
@@ -208,11 +186,8 @@ class _MapViewState extends State<MapView> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          IconButton(
-              icon: Icon(Icons.add), onPressed: canZoomIn ? _zoomIn : null),
-          IconButton(
-              icon: Icon(Icons.remove),
-              onPressed: canZoomOut ? _zoomOut : null),
+          IconButton(icon: Icon(Icons.add), onPressed: _zoomIn),
+          IconButton(icon: Icon(Icons.remove), onPressed: _zoomOut),
         ],
       ),
       right: 0.0,
@@ -237,7 +212,7 @@ class _MapViewState extends State<MapView> {
               onPositionChanged: _positionCallback,
               center: LatLng(-3.952825, -67.664360),
               zoom: 3.0,
-              maxZoom: 6.0,
+              maxZoom: 7.0,
               minZoom: 3.0),
           mapController: controller,
           layers: [
@@ -245,12 +220,15 @@ class _MapViewState extends State<MapView> {
               backgroundColor: Theme.of(context).brightness == Brightness.light
                   ? kLightMapColor
                   : kDarkMapColor,
-              urlTemplate: "assets/map/{theme}/{z}/{x}/{y}.png",
-              tileProvider: AssetTileProvider(),
+              urlTemplate:
+                  "https://api.tiles.mapbox.com/styles/v1/kalildev/{theme}/tiles/{z}/{x}/{y}@2x?access_token={token}",
+              tileProvider: NetworkTileProvider(),
               additionalOptions: {
                 'theme': Theme.of(context).brightness == Brightness.light
-                    ? 'light'
-                    : 'dark'
+                    ? 'cjzcrm7022g0d1cp7jlxdrdks'
+                    : 'cjzcrlx3i2fuq1co8kmp8vner',
+                'token':
+                    'pk.eyJ1Ijoia2FsaWxkZXYiLCJhIjoiY2p6YWM3bGRjMDB1cDNtbWppYm56Z3ljbSJ9.l1xToqUtWnzYODN-c37ZHg'
               },
             ),
             MarkerLayerOptions(
@@ -258,7 +236,7 @@ class _MapViewState extends State<MapView> {
             ),
           ],
         ),
-        if (Platform.isWindows) _buildZoomButtons()
+        _buildZoomButtons()
       ],
     ));
   }

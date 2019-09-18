@@ -5,17 +5,17 @@ import 'enums.dart';
 
 @immutable
 abstract class SettingsManagerState extends Equatable {
-  SettingsManagerState({ThemeOptions themeOptions})
-      : themeOptions = themeOptions ?? ThemeOptions.auto,
+  SettingsManagerState({ThemeMode themeOptions})
+      : themeOptions = themeOptions ?? ThemeMode.light,
         super([
-          themeOptions ?? ThemeOptions.auto,
+          themeOptions ?? ThemeMode.light,
         ]);
-  final ThemeOptions themeOptions;
+  final ThemeMode themeOptions;
 }
 
 class PlaceholderSettingsManagerState extends SettingsManagerState {}
 
 class LoadedSettingsManagerState extends SettingsManagerState {
-  LoadedSettingsManagerState({ThemeOptions themeOptions})
+  LoadedSettingsManagerState({ThemeMode themeOptions})
       : super(themeOptions: themeOptions);
 }
