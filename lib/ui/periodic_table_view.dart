@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:manganese_app/text.dart';
-import 'package:photo_view/photo_view.dart';
 
 import 'atom_painter.dart';
 
@@ -201,25 +200,16 @@ class _PeriodicTableViewState extends State<PeriodicTableView>
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) => Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                PhotoView.customChild(
-                  childSize: constraints.biggest,
-                  backgroundDecoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor),
-                  child: Stack(children: <Widget>[
-                    Align(
-                        alignment: Alignment.topLeft,
-                        child: Image.asset(
-                            Theme.of(context).brightness == Brightness.light
-                                ? 'assets/periodic_table.png'
-                                : 'assets/periodic_table_dark.png')),
-                    _buildPositioned(context, constraints),
-                    _buildPositionedText(context, constraints),
-                  ]),
-                ),
-              ],
-            ));
+        builder: (BuildContext context, BoxConstraints constraints) =>
+            Stack(children: <Widget>[
+              Align(
+                  alignment: Alignment.topLeft,
+                  child: Image.asset(
+                      Theme.of(context).brightness == Brightness.light
+                          ? 'assets/periodic_table.png'
+                          : 'assets/periodic_table_dark.png')),
+              _buildPositioned(context, constraints),
+              _buildPositionedText(context, constraints),
+            ]));
   }
 }
